@@ -15,6 +15,10 @@ type Limiter struct {
 	disabled  bool
 }
 
+func (rl *Limiter) Disable() {
+	rl.disabled = true
+}
+
 type Limitable interface {
 	Increment(key string, window time.Duration) (int64, int64, error)
 	Reset(key string)
@@ -36,7 +40,6 @@ func (l *Limiter) Allow(ip string) (bool, error) {
 		return true, nil
 	}
 
-	//NOTE: check if the request count exceeds the limit
 	if count > int64(l.limit) {
 		return false, nil
 	}
