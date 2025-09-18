@@ -8,22 +8,22 @@ import (
 
 func NewRedisLimiter(client *redis.Client, limit int, window time.Duration) *Limiter {
 	return &Limiter{
-		limitable: &RedisLimitable{client: client},
+		limitable: &redisLimitable{client: client},
 		limit:     limit,
 		window:    window,
 	}
 }
 
-type RedisLimitable struct {
+type redisLimitable struct {
 	client *redis.Client
 }
 
-func (rl *RedisLimitable) Reset(key string) {
+func (rl *redisLimitable) Reset(key string) {
 	rl.client.HSet(key, "timestamp", time.Now().Unix())
 	rl.client.HSet(key, "count", 1)
 }
 
-func (rl *RedisLimitable) Increment(key string, window time.Duration) (int64, int64, error) {
+func (rl *redisLimitable) Increment(key string, window time.Duration) (int64, int64, error) {
 	var (
 		count     *redis.IntCmd
 		timeStamp *redis.StringCmd
